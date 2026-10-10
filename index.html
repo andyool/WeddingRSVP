@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>RSVP</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Together with their families</p>
+      <h1 id="couple">Our Wedding</h1>
+      <p id="wedding-date" class="date" hidden></p>
+    </header>
+
+    <!-- Shown when the page is opened without an invitation link -->
+    <section id="no-invite" class="card" hidden>
+      <h2>Hello!</h2>
+      <p>Please open this page using the RSVP link in your invitation.</p>
+    </section>
+
+    <form id="rsvp-form" class="card" hidden novalidate>
+      <p id="greeting" class="greeting"></p>
+      <p id="deadline" class="deadline" hidden></p>
+      <p id="previous" class="notice" hidden></p>
+
+      <div id="events" class="events"></div>
+      <div id="people"></div>
+
+      <button type="button" id="add-person" class="link-button" hidden>+ Add another person</button>
+
+      <fieldset class="extras">
+        <label for="song">Is there a song that will get you on the dance floor?</label>
+        <input id="song" name="song" type="text" maxlength="200" autocomplete="off">
+
+        <label for="notes">Anything else we should know?</label>
+        <textarea id="notes" name="notes" rows="3" maxlength="1000"></textarea>
+      </fieldset>
+
+      <p id="error" class="error" role="alert" hidden></p>
+      <button type="submit" id="submit" class="primary">Send RSVP</button>
+    </form>
+
+    <section id="thanks" class="card" hidden>
+      <h2>Thank you!</h2>
+      <p id="thanks-message"></p>
+      <ul id="thanks-summary" class="summary"></ul>
+      <button type="button" id="edit" class="link-button">Change my reply</button>
+    </section>
+  </main>
+
+  <template id="person-template">
+    <fieldset class="person">
+      <legend class="person-name"></legend>
+      <div class="name-field" hidden>
+        <label>Your name</label>
+        <input type="text" class="name-input" maxlength="120" autocomplete="name">
+      </div>
+      <div class="event-replies"></div>
+      <div class="plus-one" hidden>
+        <label>Bringing a guest? Their name</label>
+        <input type="text" class="plus-one-input" maxlength="120" autocomplete="off">
+      </div>
+      <label class="dietary-label">Dietary requirements</label>
+      <input type="text" class="dietary-input" maxlength="300" autocomplete="off" placeholder="None">
+      <button type="button" class="link-button remove-person" hidden>Remove</button>
+    </fieldset>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

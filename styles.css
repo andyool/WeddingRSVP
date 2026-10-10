@@ -1,0 +1,136 @@
+:root {
+  --ink: #45364A;
+  --soft-ink: #85748A;
+  --accent: #C0577A;
+  --accent-deep: #A3445F;
+  --paper: #FFF9F6;
+  --card: #FFFFFF;
+  --blush: #F9DCE4;
+  --mint: #D5F1E4;
+  --mint-deep: #2F7D5C;
+  --rose: #F5C9CF;
+  --rose-deep: #A83F52;
+  --line: #EFE2E6;
+  --radius: 18px;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--blush) 0%, var(--paper) 320px);
+  color: var(--ink);
+  font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 18px calc(48px + env(safe-area-inset-bottom));
+}
+
+h1, h2, h3, legend {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: normal;
+}
+
+.hero { text-align: center; margin-bottom: 28px; }
+.hero h1 { font-size: clamp(2rem, 7vw, 2.8rem); margin: 4px 0; color: var(--accent-deep); letter-spacing: 0.5px; }
+.eyebrow { text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem; color: var(--soft-ink); margin: 0; }
+.date { margin: 0; color: var(--soft-ink); font-size: 1.05rem; }
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 26px 22px;
+  box-shadow: 0 10px 30px rgba(69, 54, 74, 0.08);
+}
+
+.greeting { font-size: 1.15rem; margin-top: 0; }
+.deadline { color: var(--accent-deep); font-weight: 600; margin-top: -6px; }
+.notice { background: var(--mint); color: var(--mint-deep); border-radius: 12px; padding: 10px 14px; font-size: 0.95rem; }
+
+.events { display: grid; gap: 12px; margin: 20px 0 8px; }
+.event { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.event h3 { margin: 0 0 4px; font-size: 1.2rem; color: var(--accent-deep); }
+.event p { margin: 0; color: var(--soft-ink); font-size: 0.95rem; }
+
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+
+.person { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 18px; }
+.person legend { font-size: 1.35rem; padding: 0; margin-bottom: 6px; float: left; width: 100%; }
+.person legend + * { clear: both; }
+
+label { display: block; font-size: 0.95rem; font-weight: 600; margin: 14px 0 6px; }
+
+input[type="text"], textarea {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+input[type="text"]:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+textarea { resize: vertical; }
+
+.reply { margin-top: 14px; }
+.reply-label { display: block; font-weight: 600; margin-bottom: 6px; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.choice {
+  position: relative;
+  margin: 0;
+  padding: 11px 10px;
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--paper);
+  transition: background 0.15s, border-color 0.15s;
+}
+.choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.choice:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.choice-attending:has(input:checked) { background: var(--mint); border-color: var(--mint-deep); color: var(--mint-deep); font-weight: 700; }
+.choice-declined:has(input:checked) { background: var(--rose); border-color: var(--rose-deep); color: var(--rose-deep); font-weight: 700; }
+
+.extras { border-top: 1px solid var(--line); margin-top: 22px; padding-top: 6px; }
+
+.link-button {
+  background: none;
+  border: 0;
+  color: var(--accent-deep);
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.primary {
+  display: block;
+  width: 100%;
+  margin-top: 24px;
+  padding: 15px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #FFFFFF;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primary:hover { background: var(--accent-deep); }
+.primary:disabled { opacity: 0.6; cursor: progress; }
+
+.error { color: var(--rose-deep); font-weight: 600; margin-bottom: 0; }
+
+#thanks { text-align: center; }
+#thanks h2 { font-size: 2rem; color: var(--accent-deep); margin-top: 0; }
+.summary { list-style: none; padding: 0; color: var(--soft-ink); }
+.summary li { padding: 4px 0; }
+
+[hidden] { display: none !important; }
