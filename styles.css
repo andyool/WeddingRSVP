@@ -98,6 +98,19 @@ textarea { resize: vertical; }
 .choice-attending:has(input:checked) { background: var(--mint); border-color: var(--mint-deep); color: var(--mint-deep); font-weight: 700; }
 .choice-declined:has(input:checked) { background: var(--rose); border-color: var(--rose-deep); color: var(--rose-deep); font-weight: 700; }
 
+.meal { margin-top: 10px; }
+.meal label { margin: 0 0 6px; }
+.meal-select {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+.meal-select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
 .extras { border-top: 1px solid var(--line); margin-top: 22px; padding-top: 6px; }
 
 .link-button {

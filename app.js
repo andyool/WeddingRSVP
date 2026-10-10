@@ -34,11 +34,15 @@
         events: data.e.map((e) => ({
           id: text(e.i), title: text(e.t) || 'Celebration',
           when: text(e.w), place: text(e.l), dressCode: text(e.x),
+          // Meal choices to offer when someone is coming ("o" = options).
+          mealOptions: Array.isArray(e.o) ? e.o.filter((s) => typeof s === 'string' && s.trim()).slice(0, 12) : [],
         })),
         people: (Array.isArray(data.p) ? data.p : []).map((p) => ({
           id: text(p.i), name: text(p.n),
           events: Array.isArray(p.e) ? p.e.filter((i) => Number.isInteger(i) && i >= 0 && i < data.e.length) : [],
           plusOneAllowed: p.p === true, plusOneName: text(p.q),
+          // Per-guest code from the app; echoed back so a reply can't be forged from a guest ID alone.
+          token: text(p.k),
         })),
         asksForSong: data.m === true,
       };
@@ -97,6 +101,7 @@
     const node = $('person-template').content.firstElementChild.cloneNode(true);
     node.dataset.index = String(index);
     node.dataset.guestId = person ? person.id : '';
+    node.dataset.token = person ? person.token : '';
 
     const legend = node.querySelector('.person-name');
     const nameField = node.querySelector('.name-field');
@@ -131,6 +136,7 @@
         choices.append(option);
       });
       group.append(choices);
+      if (event.mealOptions.length) addMealChoice(group, event, index, eventIndex);
       replies.append(group);
     });
 
@@ -155,6 +161,40 @@
     return node;
   }
 
+  /// A meal picker under an event's yes/no, shown only once "Joyfully accepts" is chosen.
+  function addMealChoice(group, event, index, eventIndex) {
+    const meal = el('div', 'meal');
+    meal.hidden = true;
+    const label = el('label', null, 'Meal choice');
+    const select = document.createElement('select');
+    select.className = 'meal-select';
+    select.id = `meal-${index}-${eventIndex}`;
+    label.htmlFor = select.id;
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Please choose…';
+    select.append(placeholder);
+    event.mealOptions.forEach((option) => {
+      const choice = document.createElement('option');
+      choice.value = option;
+      choice.textContent = option;
+      select.append(choice);
+    });
+    meal.append(label, select);
+    group.append(meal);
+    group.querySelectorAll('input[type="radio"]').forEach((radio) => {
+      radio.addEventListener('change', () => syncMeal(group));
+    });
+  }
+
+  /// Shows the meal picker only when the person is coming to that event.
+  function syncMeal(group) {
+    const meal = group.querySelector('.meal');
+    if (!meal) return;
+    const checked = group.querySelector('input:checked');
+    meal.hidden = !(checked && checked.value === 'attending');
+  }
+
   /// Ties a <label> to its input so screen readers announce it.
   function linkLabel(scope, id, inputSelector = 'input', labelSelector = 'label') {
     const input = scope.querySelector(inputSelector);
@@ -175,10 +215,13 @@
       const events = [...node.querySelectorAll('.reply')].map((group) => {
         const event = invite.events[Number(group.dataset.eventIndex)];
         const checked = group.querySelector('input:checked');
-        return { id: event.id, title: event.title, status: checked ? checked.value : '' };
+        const status = checked ? checked.value : '';
+        const select = group.querySelector('.meal-select');
+        return { id: event.id, title: event.title, status, meal: select && status === 'attending' ? select.value : '' };
       });
       return {
         guestId,
+        token: node.dataset.token || '',
         name,
         events,
         plusOneName: node.querySelector('.plus-one').hidden ? '' : node.querySelector('.plus-one-input').value.trim(),
@@ -194,6 +237,11 @@
       if (!person.name) return 'Please add your name.';
       if (person.events.some((e) => !e.status)) {
         return `Please let us know which events ${reply.people.length > 1 ? person.name : 'you'} can make.`;
+      }
+      const missingMeal = person.events.find((e) => e.status === 'attending' && !e.meal
+        && (invite.events.find((ev) => ev.id === e.id) || { mealOptions: [] }).mealOptions.length);
+      if (missingMeal) {
+        return `Please choose a meal for ${reply.people.length > 1 ? person.name : 'yourself'} at the ${missingMeal.title}.`;
       }
     }
     return null;
@@ -230,6 +278,9 @@
         const match = (person.events || []).find((e) => e.id === event.id);
         const input = match && group.querySelector(`input[value="${match.status === 'attending' ? 'attending' : 'declined'}"]`);
         if (input) input.checked = true;
+        const select = group.querySelector('.meal-select');
+        if (select && match && match.meal) select.value = match.meal;
+        syncMeal(group);
       });
       node.querySelector('.plus-one-input').value = person.plusOneName || node.querySelector('.plus-one-input').value;
       node.querySelector('.dietary-input').value = person.dietary || '';
@@ -287,7 +338,7 @@
     list.replaceChildren();
     reply.people.forEach((person) => {
       const summary = person.events
-        .map((e) => `${e.title}: ${e.status === 'attending' ? 'Yes' : 'No'}`)
+        .map((e) => `${e.title}: ${e.status === 'attending' ? (e.meal ? `Yes (${e.meal})` : 'Yes') : 'No'}`)
         .join(' · ');
       list.append(el('li', null, `${person.name} — ${summary}`));
     });

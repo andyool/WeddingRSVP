@@ -47,8 +47,17 @@ Tap **Test connection**. You should see "Connected. 0 replies so far."
 
 From now on, invitations and reminder messages include a personal **RSVP here** link. Replies show up under **RSVPs**: open the screen, or tap **Check now** in the *Online replies* card.
 
+## Updating the script (when this repo's `Code.gs` changes)
+The page updates itself when this repo changes, but the Google Script does not. To pick up a new `Code.gs`:
+1. Open your Sheet → **Extensions → Apps Script**.
+2. Replace everything in `Code.gs` with the new [`apps-script/Code.gs`](apps-script/Code.gs). Keep your own `SECRET` line.
+3. Click **Save**, then **Deploy → Manage deployments → ✎ Edit → Version: New version → Deploy**. The `/exec` URL stays the same, so nothing changes in the app.
+
+Latest change (October 2026): replies now carry each guest's **token** (so a reply can't be forged just from a link) and a **meal choice** per event when the event offers options. Old rows and links keep working; a new "Token" column appears in the Sheet.
+
 ## Good to know
-- **Changing the script later:** after editing `Code.gs`, use **Deploy → Manage deployments → Edit → Version: New version** so the `/exec` URL stays the same.
+- **Changing the script later:** see *Updating the script* above.
+- **Meal choices:** add options to an event in the app (Wedding Details → event → Meal choices) and the page asks guests to pick one when they accept.
 - **Households:** guests with the same *Household* name on their guest records can all reply from one link.
 - **Group emails** (BCC) send a general link, and guests type their own names. If a name doesn't exactly match a guest, the app asks you to match it under *Online replies*.
 - **Changing a reply:** guests can open their link again and resubmit. The newest reply wins, but if you edit an RSVP in the app afterwards, your edit is kept.

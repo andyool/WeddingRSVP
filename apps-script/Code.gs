@@ -12,7 +12,8 @@
 const SECRET = 'PASTE-YOUR-SECRET-KEY-HERE';
 
 const SHEET_NAME = 'RSVPs';
-const HEADERS = ['Submitted', 'Reply ID', 'Guest ID', 'Name', 'Replies', 'Bringing', 'Dietary', 'Song request', 'Notes', 'Events JSON'];
+// Columns are only ever added at the end, so older rows keep their meaning.
+const HEADERS = ['Submitted', 'Reply ID', 'Guest ID', 'Name', 'Replies', 'Bringing', 'Dietary', 'Song request', 'Notes', 'Events JSON', 'Token'];
 const STATUSES = { attending: 'Yes', declined: 'No' };
 
 /** Receives a reply from the RSVP page. */
@@ -32,10 +33,11 @@ function doPost(e) {
           id: clean(event.id, 64),
           title: clean(event.title, 120),
           status: STATUSES[event.status] ? event.status : 'pending',
+          meal: clean(event.meal, 120),
         };
       });
       const summary = events.map(function (event) {
-        return event.title + ': ' + (STATUSES[event.status] || '?');
+        return event.title + ': ' + (STATUSES[event.status] || '?') + (event.meal ? ' (' + event.meal + ')' : '');
       }).join(' · ');
       return [
         submitted,
@@ -48,6 +50,7 @@ function doPost(e) {
         i === 0 ? clean(body.song, 200) : '',
         i === 0 ? clean(body.notes, 1000) : '',
         JSON.stringify(events),
+        clean(person.token, 64),
       ].map(asText);
     });
 
@@ -85,6 +88,7 @@ function doGet(e) {
         song: fromText(row[7]),
         notes: fromText(row[8]),
         events: events,
+        token: fromText(row[10]),
       };
     });
   return json({ ok: true, replies: replies });
@@ -98,6 +102,11 @@ function getSheet() {
     sheet.appendRow(HEADERS);
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+  } else if (sheet.getLastColumn() < HEADERS.length) {
+    // A newer script added columns: write the full header row so the Sheet stays readable.
+    const header = sheet.getRange(1, 1, 1, HEADERS.length);
+    header.setValues([HEADERS]);
+    header.setFontWeight('bold');
   }
   return sheet;
 }
