@@ -26,6 +26,7 @@
       if (!data || data.v !== 1 || !ALLOWED_ENDPOINT.test(data.s || '') || !Array.isArray(data.e)) return null;
       return {
         endpoint: data.s,
+        title: text(data.t),
         couple: text(data.c),
         date: text(data.d),
         deadline: text(data.r),
@@ -39,6 +40,7 @@
           events: Array.isArray(p.e) ? p.e.filter((i) => Number.isInteger(i) && i >= 0 && i < data.e.length) : [],
           plusOneAllowed: p.p === true, plusOneName: text(p.q),
         })),
+        asksForSong: data.m === true,
       };
     } catch (err) {
       return null;
@@ -59,6 +61,8 @@
   }
 
   function renderHeader() {
+    if (invite.title) $('title').textContent = invite.title;
+    $('song-field').hidden = !invite.asksForSong;
     if (invite.couple) {
       $('couple').textContent = invite.couple;
       document.title = `RSVP · ${invite.couple}`;
@@ -181,7 +185,8 @@
         dietary: node.querySelector('.dietary-input').value.trim(),
       };
     });
-    return { people, song: $('song').value.trim(), notes: $('notes').value.trim() };
+    const song = invite.asksForSong ? $('song').value.trim() : '';
+    return { people, song, notes: $('notes').value.trim() };
   }
 
   function validate(reply) {
@@ -196,9 +201,11 @@
 
   // ---------- Remembering a previous reply on this device ----------
 
+  /// One saved reply per guest and invitation, so an engagement party reply
+  /// doesn't pre-fill the wedding RSVP.
   function storageKey() {
     const ids = invite.people.map((p) => p.id).join(',');
-    return ids ? `rsvp:${ids}` : null;
+    return ids ? `rsvp:${ids}|${invite.events.map((e) => e.id).join(',')}` : null;
   }
 
   function restorePrevious() {

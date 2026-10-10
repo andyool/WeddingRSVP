@@ -11,7 +11,7 @@
 <body>
   <main class="page">
     <header class="hero">
-      <p class="eyebrow">Together with their families</p>
+      <p id="title" class="eyebrow">Together with their families</p>
       <h1 id="couple">Our Wedding</h1>
       <p id="wedding-date" class="date" hidden></p>
     </header>
@@ -33,8 +33,10 @@
       <button type="button" id="add-person" class="link-button" hidden>+ Add another person</button>
 
       <fieldset class="extras">
-        <label for="song">Is there a song that will get you on the dance floor?</label>
-        <input id="song" name="song" type="text" maxlength="200" autocomplete="off">
+        <div id="song-field" hidden>
+          <label for="song">Is there a song that will get you on the dance floor?</label>
+          <input id="song" name="song" type="text" maxlength="200" autocomplete="off">
+        </div>
 
         <label for="notes">Anything else we should know?</label>
         <textarea id="notes" name="notes" rows="3" maxlength="1000"></textarea>
