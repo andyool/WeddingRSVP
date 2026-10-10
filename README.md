@@ -30,8 +30,12 @@ The online RSVP page for the **TheWedding** app, hosted on GitHub Pages.
 1. Click **Deploy → New deployment**.
 2. Click the gear next to *Select type* and choose **Web app**.
 3. Set **Execute as:** *Me*, and **Who has access:** *Anyone*.
-4. Click **Deploy**, then allow access when Google asks (choose *Advanced → Go to … (unsafe)*; it's your own script).
-5. Copy the **Web app URL** (it ends in `/exec`).
+4. Click **Deploy → Authorize access** and choose your Google account.
+   Google will say *"Google hasn't verified this app"*. That's expected, because the "developer" is you.
+   Click **Advanced** (bottom left) → **Go to … (unsafe)** → **Allow**.
+   The script can only access the one Sheet it's attached to.
+5. Copy the **Web app URL** (it ends in `/exec`). If you closed the dialog, find it under **Deploy → Manage deployments**.
+   Don't use the *Test deployments* URL ending in `/dev`, because guests can't reach it.
 
 ### 4. Connect the app
 In **Settings → Online RSVP**:

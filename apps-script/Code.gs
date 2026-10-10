@@ -1,4 +1,6 @@
 /**
+ * @OnlyCurrentDoc
+ *
  * Wedding RSVP – Google Apps Script
  *
  * Paste this into Extensions → Apps Script of a Google Sheet, then deploy it as a web app
