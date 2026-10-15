@@ -5,54 +5,196 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
-  <title>RSVP</title>
+  <meta name="theme-color" content="#EFE4CF">
+  <title>You're invited</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Petit+Formal+Script&family=Meddon&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/envelope.jpg">
 </head>
 <body>
-  <main class="page">
-    <header class="hero">
-      <p id="title" class="eyebrow">Together with their families</p>
-      <h1 id="couple">Our Wedding</h1>
-      <p id="wedding-date" class="date" hidden></p>
-    </header>
 
-    <!-- Shown when the page is opened without an invitation link -->
-    <section id="no-invite" class="card" hidden>
-      <h2>Hello!</h2>
-      <p>Please open this page using the RSVP link in your invitation.</p>
+  <!-- Shown when the page is opened without an invitation link -->
+  <section id="no-invite" class="no-invite" hidden>
+    <img class="no-invite-art" src="assets/art/icon-faq.png" alt="">
+    <h2>Hello!</h2>
+    <p>Please open this page using the link in your invitation.</p>
+  </section>
+
+  <!-- 1. Opening overlay: the Ivory Glow envelope. Holds its first frame until the seal is tapped,
+       plays the opening once, then fades into the hero. -->
+  <div id="envelope" class="envelope" hidden>
+    <img class="env-media env-still" src="assets/envelope.jpg" alt="">
+    <video id="env-video" class="env-media" src="assets/envelope.mp4" poster="assets/envelope.jpg" preload="auto" muted playsinline disablepictureinpicture></video>
+    <button type="button" id="seal" class="seal-hit" aria-label="Open your invitation"></button>
+    <p class="env-for">For <span id="env-greeting">our family &amp; friends</span></p>
+    <p class="env-hint">Tap the seal to open</p>
+  </div>
+
+  <!-- 3. Vintage rose parchment behind the whole scrolling body -->
+  <div id="paper" class="paper" aria-hidden="true">
+    <video id="paper-video" class="paper-media" src="assets/paper.mp4" poster="assets/paper.jpg" preload="auto" muted loop playsinline disablepictureinpicture></video>
+  </div>
+
+  <main id="invite" class="invite pending">
+
+    <!-- 2. Hero: Tuscan Sunset Lights behind the names -->
+    <section class="hero" id="hero">
+      <video id="hero-video" class="hero-media" src="assets/hero.mp4" poster="assets/hero.jpg" preload="auto" muted loop playsinline disablepictureinpicture></video>
+      <div class="hero-text">
+        <h1 id="couple" class="names">
+          <span id="name-one" class="name">Our</span>
+          <span id="amp" class="amp">&amp;</span>
+          <span id="name-two" class="name">Wedding</span>
+        </h1>
+        <p id="headline" class="caps">Together with their families</p>
+        <img class="divider" src="assets/ui/divider.png" alt="">
+        <p id="wedding-date" class="date" hidden></p>
+      </div>
     </section>
 
-    <form id="rsvp-form" class="card" hidden novalidate>
-      <p id="greeting" class="greeting"></p>
-      <p id="deadline" class="deadline" hidden></p>
-      <p id="previous" class="notice" hidden></p>
+    <!-- 4. Countdown -->
+    <section class="block reveal" id="countdown" hidden>
+      <h2 class="script-title">Countdown</h2>
+      <p class="body-copy">We can't wait for this moment!</p>
+      <div class="count-grid">
+        <div class="count"><span id="cd-days" class="digits">0</span><small>Days</small></div>
+        <div class="count"><span id="cd-hours" class="digits">0</span><small>Hours</small></div>
+        <div class="count"><span id="cd-mins" class="digits">0</span><small>Minutes</small></div>
+        <div class="count"><span id="cd-secs" class="digits">0</span><small>Seconds</small></div>
+      </div>
+      <p id="cd-done" class="script-note" hidden></p>
+    </section>
 
-      <div id="events" class="events"></div>
-      <div id="people"></div>
+    <!-- 5. Venue -->
+    <section class="block reveal" id="venue" hidden>
+      <h2 class="script-title">The Venue</h2>
+      <img class="art art-venue" src="assets/art/venue.png" alt="">
+      <div id="venue-list"></div>
+      <div id="travel-list"></div>
+    </section>
 
-      <button type="button" id="add-person" class="link-button" hidden>+ Add another person</button>
+    <!-- 6. Timeline -->
+    <section class="block reveal" id="timeline" hidden>
+      <img class="section-icon" src="assets/art/icon-timeline.png" alt="">
+      <h2 class="script-title">Timeline</h2>
+      <p class="body-copy">What we have planned for you</p>
+      <ol id="timeline-list" class="timeline-list"></ol>
+    </section>
 
-      <fieldset class="extras">
-        <div id="song-field" hidden>
-          <label for="song">Is there a song that will get you on the dance floor?</label>
-          <input id="song" name="song" type="text" maxlength="200" autocomplete="off">
+    <!-- 7. Dress code -->
+    <section class="block reveal" id="dress" hidden>
+      <img class="section-icon" src="assets/art/icon-dresscode.png" alt="">
+      <h2 class="script-title" id="dress-title">Dress Code</h2>
+      <div id="dress-list"></div>
+      <img class="art art-dress" src="assets/art/dress-group.png" alt="">
+      <div id="swatches" class="swatches" hidden></div>
+    </section>
+
+    <!-- 8. Gifts -->
+    <section class="block reveal" id="gifts" hidden>
+      <img class="section-icon" src="assets/art/icon-gifts.png" alt="">
+      <h2 class="script-title">Gifts</h2>
+      <p id="gift-text" class="body-copy"></p>
+      <div id="registry" class="button-stack"></div>
+    </section>
+
+    <!-- 9. Menu inside the burgundy bow frame -->
+    <section class="block reveal" id="menu" hidden>
+      <div class="menu-frame">
+        <img class="menu-overlay" src="assets/art/menu-frame.png" alt="">
+        <div class="menu-inner">
+          <h2 class="script-title">Menu</h2>
+          <div id="menu-list"></div>
         </div>
-
-        <label for="notes">Anything else we should know?</label>
-        <textarea id="notes" name="notes" rows="3" maxlength="1000"></textarea>
-      </fieldset>
-
-      <p id="error" class="error" role="alert" hidden></p>
-      <button type="submit" id="submit" class="primary">Send RSVP</button>
-    </form>
-
-    <section id="thanks" class="card" hidden>
-      <h2>Thank you!</h2>
-      <p id="thanks-message"></p>
-      <ul id="thanks-summary" class="summary"></ul>
-      <button type="button" id="edit" class="link-button">Change my reply</button>
+      </div>
     </section>
+
+    <!-- 10. Gallery: a photo under the ornate oval frame -->
+    <section class="block reveal" id="gallery" hidden>
+      <h2 class="script-title">Photo Gallery</h2>
+      <p class="body-copy">Moments we treasure</p>
+      <div class="oval">
+        <img id="gallery-photo" class="oval-photo" alt="">
+        <img class="oval-frame" src="assets/art/oval-frame.png" alt="">
+      </div>
+    </section>
+
+    <!-- 11 + 12. String lights, then accommodation -->
+    <section class="block reveal" id="stay" hidden>
+      <img class="string-lights" src="assets/ui/string-lights.png" alt="">
+      <img class="section-icon" src="assets/art/icon-accommodation.png" alt="">
+      <h2 class="script-title">Accommodation</h2>
+      <p class="body-copy">Recommendations for your stay</p>
+      <div id="stay-list"></div>
+    </section>
+
+    <section class="block reveal" id="story" hidden>
+      <img class="section-icon" src="assets/art/icon-story.png" alt="">
+      <h2 class="script-title">Our Story</h2>
+      <p id="story-text" class="body-copy"></p>
+    </section>
+
+    <!-- 13. FAQ -->
+    <section class="block reveal" id="faq" hidden>
+      <img class="section-icon" src="assets/art/icon-faq.png" alt="">
+      <h2 class="script-title">FAQ</h2>
+      <div id="faq-list" class="faq-list"></div>
+    </section>
+
+    <!-- 14. RSVP -->
+    <section class="block rsvp reveal" id="rsvp">
+      <h2 class="script-title">RSVP</h2>
+      <p class="body-copy">We can't wait!</p>
+      <p id="deadline" class="caps deadline" hidden></p>
+
+      <div class="rsvp-panel">
+        <img class="rsvp-floral" src="assets/art/rsvp-floral.png" alt="">
+        <p id="greeting" class="greeting"></p>
+
+        <form id="rsvp-form" novalidate>
+          <p id="previous" class="notice" hidden></p>
+
+          <div id="events" class="events"></div>
+          <div id="people"></div>
+
+          <button type="button" id="add-person" class="link-button" hidden>+ Add another person</button>
+
+          <fieldset class="extras">
+            <div id="song-field" hidden>
+              <label for="song">Is there a song that will get you on the dance floor?</label>
+              <input id="song" name="song" type="text" maxlength="200" autocomplete="off">
+            </div>
+
+            <label for="notes">Anything else we should know?</label>
+            <textarea id="notes" name="notes" rows="3" maxlength="1000"></textarea>
+          </fieldset>
+
+          <p id="error" class="error" role="alert" hidden></p>
+          <button type="submit" id="submit" class="primary">Send RSVP</button>
+        </form>
+
+        <div id="thanks" class="thanks" hidden>
+          <h3 class="script-title small">Thank you!</h3>
+          <p id="thanks-message"></p>
+          <ul id="thanks-summary" class="summary"></ul>
+          <button type="button" id="edit" class="link-button">Change my reply</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer reveal">
+      <img class="divider" src="assets/ui/divider.png" alt="">
+      <p id="footer-names" class="script-note"></p>
+      <p id="hashtag" class="caps" hidden></p>
+    </footer>
   </main>
+
+  <button type="button" id="scroll-rsvp" class="scroll-pill" hidden>
+    <span>Scroll to RSVP</span>
+    <img src="assets/ui/scroll-mouse.png" alt="">
+  </button>
 
   <template id="person-template">
     <fieldset class="person">

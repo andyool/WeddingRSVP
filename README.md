@@ -1,8 +1,8 @@
-# Wedding RSVP
+# Wedding invitation & RSVP
 
-The online RSVP page for the **TheWedding** app, hosted on GitHub Pages.
+The online invitation for the **TheWedding** app, hosted on GitHub Pages.
 
-- Guests open their personal link from the invitation, tick yes or no for each event, and add a plus one, dietary needs, a song request and notes.
+- Guests open their personal link and see a sealed envelope. Tapping the wax seal plays the opening, then the invitation scrolls: names and date, countdown, venue, timeline, dress code, gifts, menu, photo, accommodation, FAQ and the RSVP form.
 - Replies are saved to a Google Sheet by a small Google Apps Script.
 - The app reads the Sheet (using a secret key) and fills in each guest's RSVP automatically.
 
@@ -45,7 +45,25 @@ In **Settings → Online RSVP**:
 
 Tap **Test connection**. You should see "Connected. 0 replies so far."
 
-From now on, invitations and reminder messages include a personal **RSVP here** link. Replies show up under **RSVPs**: open the screen, or tap **Check now** in the *Online replies* card.
+From now on, invitations and reminder messages include a personal **Open invitation** link. Replies show up under **RSVPs**: open the screen, or tap **Check now** in the *Online replies* card.
+
+## What the invitation shows, and where it comes from
+
+| Section | Filled from (in the app) |
+| --- | --- |
+| Envelope "For …" | The guest's name or household greeting |
+| Names, headline, date | Wedding details and the invitation's headline |
+| Countdown | The ceremony's start time (or the event's own start for other invitations) |
+| The Venue, View Map, Getting there, Parking | Each event's venue, address, transport and parking |
+| Timeline | Each included event's start/end time and "Other details" |
+| Dress code and colour swatches | Each event's dress code and dress code colours |
+| Gifts | The event's "Gifts" note and the registry links in Settings |
+| Menu | The event's meal choices (guests pick one when they RSVP) |
+| Photo Gallery | The invitation's photo link (hidden when empty) |
+| Accommodation | Each event's accommodation note |
+| Our Story, FAQ, hashtag | Settings → Wedding, Guest FAQ and Online |
+
+Sections with nothing to show are left out.
 
 ## Updating the script (when this repo's `Code.gs` changes)
 The page updates itself when this repo changes, but the Google Script does not. To pick up a new `Code.gs`:
@@ -53,18 +71,23 @@ The page updates itself when this repo changes, but the Google Script does not. 
 2. Replace everything in `Code.gs` with the new [`apps-script/Code.gs`](apps-script/Code.gs). Keep your own `SECRET` line.
 3. Click **Save**, then **Deploy → Manage deployments → ✎ Edit → Version: New version → Deploy**. The `/exec` URL stays the same, so nothing changes in the app.
 
-Latest change (October 2026): replies now carry each guest's **token** (so a reply can't be forged just from a link) and a **meal choice** per event when the event offers options. Old rows and links keep working; a new "Token" column appears in the Sheet.
+Latest script change (October 2026): replies carry each guest's **token** (so a reply can't be forged just from a link) and a **meal choice** per event when the event offers options. Old rows and links keep working; a new "Token" column appears in the Sheet.
 
 ## Good to know
-- **Changing the script later:** see *Updating the script* above.
-- **Meal choices:** add options to an event in the app (Wedding Details → event → Meal choices) and the page asks guests to pick one when they accept.
-- **Households:** guests with the same *Household* name on their guest records can all reply from one link.
+- **Older links keep working.** Every field added for the full invitation is optional; a link made by an older app build simply shows fewer sections.
+- **Meal choices:** add options to an event in the app (Wedding Details → event → Meal choices) and the page lists them as the menu and asks guests to pick one when they accept.
+- **Households:** guests in the same household can all reply from one link.
 - **Group emails** (BCC) send a general link, and guests type their own names. If a name doesn't exactly match a guest, the app asks you to match it under *Online replies*.
 - **Changing a reply:** guests can open their link again and resubmit. The newest reply wins, but if you edit an RSVP in the app afterwards, your edit is kept.
-- The Sheet stays readable: one row per guest, with a summary like `Ceremony: Yes · Reception: No`.
+- **Motion:** guests with "Reduce Motion" turned on see the still artwork instead of the animations.
 
 ## Files
 | File | Purpose |
 | --- | --- |
-| `index.html`, `styles.css`, `app.js` | The RSVP page |
+| `index.html`, `styles.css`, `app.js` | The invitation and RSVP page |
+| `assets/envelope.mp4`, `hero.mp4`, `paper.mp4` + `.jpg` posters | Envelope opening, Tuscan hero loop and parchment loop (H.264, encoded from the asset kit's frame sequences) |
+| `assets/art/` | Illustrations, section icons and frame overlays from the asset kit |
+| `assets/ui/` | Divider, string lights and scroll hint |
 | `apps-script/Code.gs` | Google Apps Script that stores and returns replies |
+
+Artwork comes from the invitation asset kit kept outside this repo (`TheWedding/InvitationAssets`); see its `guide/REBUILD-GUIDE.md` for the layer order this page follows.
